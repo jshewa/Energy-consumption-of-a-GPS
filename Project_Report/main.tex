@@ -1,0 +1,44 @@
+% A simple LaTeX template for lab reports in TDT4258 Energy Efficient Computer Design
+% by Yaman Umuroglu (yamanu@idi.ntnu.no)
+% Feel free to customize the style as you see fit, but the chapters/sections mentioned in the
+% template should be included with the appropriate content.
+
+\documentclass[abstract=on,a4paper]{scrreprt}
+\usepackage[utf8]{inputenc}
+
+
+\usepackage{natbib}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.12}
+\usepackage{textcomp}
+
+
+% Edit the meta.tex file to change title, group number and author names 
+\input{meta.tex}
+
+
+\begin{document}
+% Caps roman numbers: \pagenumbering{roman} 
+\pagenumbering{roman}
+% The title page, edit if you want to customize it 
+
+\input{title.tex}
+
+% Main matter - edit corresponding file under content/ to change
+\input{Project_Report/Content/01-Assignment.tex}
+\input{Content/02-Abstract.tex}
+\input{Content/03-Preface.tex}
+\input{Content/04-Table-of-contents.tex}
+\input{Content/05-Introduction.tex}
+\input{Content/06-Literary-study.tex}
+\input{Content/07-Previous-work.tex}
+\input{Content/08-Theory.tex}
+
+
+
+% Bibliography - edit references.bib and use the \cite command in text
+%\bibliographystyle{plain}
+%\bibliography{references}
+\end{document}
