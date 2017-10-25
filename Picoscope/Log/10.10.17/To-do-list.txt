@@ -1,0 +1,24 @@
+
+Tester som må bli gjennomført:
+
+1. Sjekk at fix og pinout blir satt -check
+2. FULLMODE
+    - SJEKK FRA ACKQUISTION TIL TRACKING
+    - NOTER TIDEN FOR FIX
+3. STANDBY
+    - FRA ACK TIL STANDBY
+4. PERIODIC
+- FRA ACK TIL PERIODIC
+5.
+- Cold start
+
+Datablad L76-L
+
+Acquistion: 25 ma
+Tracking : 18 ma
+standby : 500 uA = 0.5 ma
+Average current when powered on is 40 ma
+
+
+
+
