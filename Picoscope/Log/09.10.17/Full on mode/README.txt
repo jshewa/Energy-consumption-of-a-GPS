@@ -1,1 +1,1 @@
-Strøm average =  160-167 før fix | 150-159 etter fix
+Strï¿½m average =  160-167 fï¿½r fix | 150-159 etter fix
