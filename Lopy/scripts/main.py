@@ -1,7 +1,6 @@
 import machine
 import math
 import network
-from server import tcp
 import os
 import time
 import utime
