@@ -1,2 +1,2 @@
-Hvis ingenting gjøres i main men gps kjøres er average = 145 mA
+Hvis ingenting gjï¿½res i main men gps kjï¿½res er average = 145 mA
 Med program for fix= 157 ma average
