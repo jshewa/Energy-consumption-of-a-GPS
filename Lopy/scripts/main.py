@@ -39,7 +39,6 @@ bt.deinit()
 
 
 py = Pytrack()
-#l76 = L76GNSS(py, timeout=2)
 l76 = L76GNSS(py)
 l76.write_gps(l76.COLD_START,False)
 time.sleep(2)
@@ -47,15 +46,15 @@ time.sleep(2)
 p_out.value(1)
 time.sleep(0.25)
 p_out.value(0)
+
 while (True):
+
     coord = l76.coordinates()
     print ("FIX:jared ", l76.fix)
-    if (l76.first_fix ==1):
-        print('timestamp: ',l76.timestamp)
+    if ((l76.fix) and not(l76.first_fix)):
+        l76.first_fix = 1
+        l76._set_time()
+
         p_out.value(1)
         time.sleep(0.25)
         p_out.value(0)
-        while(True):
-            coord = l76.coordinates()
-            print ("FIX: ", l76.fix)
-            time.sleep(0.25)

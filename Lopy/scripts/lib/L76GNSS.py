@@ -28,6 +28,7 @@ class L76GNSS:
         self.fix = 0
         self.first_fix=0
         self.timestamp= 0
+        self.gpgga_s= ''
 
         self.lat_d = 0
         self.lon_d = 0
@@ -51,22 +52,24 @@ class L76GNSS:
     def _read(self):
         self.reg = self.i2c.readfrom(GPS_I2CADDR, 64)
         return self.reg
-    def _set_time(self,gpgga_s):
+    def _set_time(self):
         print('_set_time')
-        self.timestamp = gpgga_s[1]
+        self.timestamp = self.gpgga_s[1]
         print('timestamp set',self.timestamp)
-    def _convert_coords(self, gpgga_s):
-        lat = gpgga_s[1]
+
+    def _convert_coords(self):
+        lat = self.gpgga_s[1]
         lat_d = (float(lat) // 100) + ((float(lat) % 100) / 60)
-        lon = gpgga_s[3]
+        lon = self.gpgga_s[3]
         lon_d = (float(lon) // 100) + ((float(lon) % 100) / 60)
-        if gpgga_s[2] == 'S':
+        if self.gpgga_s[2] == 'S':
             lat_d *= -1
-        if gpgga_s[4] == 'W':
+        if self.gpgga_s[4] == 'W':
             lon_d *= -1
         return(lat_d, lon_d)
-    def get_fix(self,gpgga_s):
-        temp_fix= gpgga_s[6]
+
+    def get_fix(self):
+        temp_fix= self.gpgga_s[6]
         self.fix = int(temp_fix)
 
     def coordinates(self, debug=False):
@@ -93,15 +96,12 @@ class L76GNSS:
                 if e_idx >= 0:
                     try:
                         gpgga = gpgga[:e_idx].decode('ascii')
-                        gpgga_s = gpgga.split(',')
-                        print(gpgga_s)
-                        self.get_fix(gpgga_s)
+                        print (gpgga)
+                        self.gpgga_s = gpgga.split(',')
+                        print(self.gpgga_s)
+                        self.get_fix()
                         if(self.fix >0):
-                            if(self.first_fix == 0):
-                                self.first_fix = 1
-                                self._set_time(gpgga_s)
-                            #self._get_clock(gpgga_s)
-                            self.lat_d, self.lon_d = self._convert_coords(gpgga_s)
+                            self.lat_d, self.lon_d = self._convert_coords(self.gpgga_s)
                     except Exception:
                         pass
                     finally:
