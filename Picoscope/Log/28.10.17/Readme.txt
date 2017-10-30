@@ -17,6 +17,7 @@ Back up mode requires lower power consumption than standby mode. In this mode, t
 acquire and track satellites. UART1 is not accessible. But the backed-up memory in RTC domain which
 contains all the necessary GPS information for quick start-up and a small amount of user configuration
 variables is alive. Due to the backed-up memory, EASY technology is available. The current consumption
-in this mode is about 7uA. 
+in this mode is about 7uA. 
+
 
 Tried using forum suggestion and got a drop from 78 mv to 70 mv...
