@@ -18,27 +18,27 @@ class energyMeasure():
 		self.mCurr = []
 		self.mDur = []
 		self.sdCurr = []
-		self.allvalues = []
 		self.numberOfSamples=0
 		self.captureLength = CLENGTH * 1E-3
 		self.threshold = THRESHOLD
 		self.samplingfreq = SAMPLINGFREQ
 		self.capturesampleNo = self.captureLength * (self.samplingfreq * 1E6)
+		self.containerA= []
+		self.containerB = []
 	
 	def openScope(self):
 		self.ps.open()
 
-		self.ps.setChannel("A", coupling="DC", VRange=1, probeAttenuation=10, BWLimited = 2)
-		self.ps.setChannel("B", enabled = False)
+		self.ps.setChannel("A", coupling="DC", VRange=1, probeAttenuation=10)
+		self.ps.setChannel("B", coupling = "DC", VRange = 1 , probeAttenuation=10)
 		self.ps.setChannel("C", enabled= False)
-		#self.ps.setChannel("C", enabled=False)
 		self.ps.setChannel("D", enabled=False)
 		res = self.ps.setSamplingFrequency(self.samplingfreq * 1E6,int(self.capturesampleNo))
 
 		self.sampleRate = res[0]
 		print("Sampling @ %f MHz, %d samples"%(res[0]/1E6, res[1]))
 		#Use external trigger to mark when we sample
-		#self.ps.setSimpleTrigger(trigSrc="NONE")
+		self.ps.setSimpleTrigger(trigSrc="B",enabled=False)
 
 	def closeScope(self):
 		self.ps.close()
@@ -74,53 +74,51 @@ class energyMeasure():
 		print("StandardDeviation:", np.std(subChannelA))
 
 	def measure(self, filename):
-		print("Waiting for trigger")
-		while(self.ps.isReady() == False):pass
-		print("Sampling Done")
-		print("captureSampleNo: ",int(self.capturesampleNo))
-		print("Number of samples :",self.numberOfSamples)
-		dataA = self.ps.getDataV("A", int(self.capturesampleNo))
-		#print (dataA)
-		#print (len(dataA))
-		#self.allvalues.append(dataA)
-		
-		"""fig = pl.figure()
-		pl.plot(dataA)
-		pl.savefig("fig\currentconsumption"+str(em.numberOfSamples)+args.experimentName+".png")
-		fig.clf()
-		pl.close()"""
-		"""
-		dataB = self.ps.getDataV("B", int(self.capturesampleNo))
-		indices = []
-		for index in range(len(dataB)):
-			if dataB[index] >= THRESHOLD:
-				break;
+		#setting the maximum number of waveform = 3000 -> 5min*60s*1000*ms*100= 300 000 waveforms
+		i=0
+		while(i<300000):
+			self.armMeasure()
+			while(self.ps.isReady() == False):pass
+			dataA = self.ps.getDataV("A", int(self.capturesampleNo))
+			dataB = self.ps.getDataV("B", int(self.capturesampleNo))
+			self.containerA.append(-dataA)
+			self.containerB.append(-dataB)
+			i=i+1
 
-		print("Index: ", index)
-		if self.numberOfSamples == 0:
-			pass
-		if (index+1) < len(dataB):
-			self.numberOfSamples = self.numberOfSamples + 1
-			self.computeMeanAndStdevSubChannel(dataA[1:index], index)				
-		"""
+	def plotformat(self):
+		self.containerA = np.asarray(self.containerA)
+		self.containerB = np.asarray(self.containerB)
+		print("The measurments contains:" + str(len(self.containerA))+"waveforms")                                                   
 
-		"""#print "dataA:",self.rms(dataA)
-		#dataB = self.ps.getDataV("B",int(self.capturesampleNo))
-		#print "dataB:",self.rms(dataB)
-		#temp= np.subtract(dataA,dataB)
-		#temp= self.rms(temp)
-		#print "rms:",temp
-		self.allvalues.append(temp)
-		if(self.capturesampleNo!=0):
-			if(self.numberOfSamples%100==0):
-				fig = pl.figure()
-				pl.plot(self.allvalues)
-				pl.savefig("fig\currentconsumption"+str(self.numberOfSamples)+filename+".png")
-				fig.clf()
-				pl.close()
-				self.allvalues = []
+		for i in range(len(self.containerA)):
+			print("Working on plotting waveform "+str(i)+"of"+str(len(self.containerA)))
+			fig= pl.figure(figsize=(20,5))   
+			ax 	= 	fig.add_subplot(1,1,1)
 
-		self.numberOfSamples = self.numberOfSamples + 1"""
+			# major ticks every 15, minor ticks every 5                                      
+			ymajor_ticks = np.arange(0, 0.150, 0.015)                                              
+			yminor_ticks = np.arange(0, 0.150, 0.005)
+			
+			xmajor_ticks = np.arange(0, 500, 10)                                              
+			xminor_ticks = np.arange(0, 500, 5)
+
+			ax.set_xticks(xmajor_ticks)                                                       
+			ax.set_xticks(xminor_ticks, minor=True)                                           
+			ax.set_yticks(ymajor_ticks)                                                       
+			ax.set_yticks(yminor_ticks, minor=True)
+			ax.grid(which='minor', alpha=0.2)                                                
+			ax.grid(which='major', alpha=0.5)   
+			pl.suptitle('Waveform ' +str(i), fontsize = 12)
+			ax.set_xlabel('Sample number of 100 ms')
+			ax.set_ylabel('Voltage')
+			pl.plot(self.containerA[i], linewidth= 0.5)
+			pl.plot(self.containerB[i], linewidth= 0.5)
+			pl.rc('grid', linestyle="-", color='black')
+			pl.savefig("log\currentconsumption"+str(i)+args.experimentName+".png")
+			pl.clf()
+		pl.close()
+                                                 
+
 
 	def output(self, filename, x, y, z):
 		book = xlwt.Workbook()
@@ -189,7 +187,7 @@ if __name__ == "__main__":
 	parser.add_argument('-s', dest='maxsamples', type=int, required=True, help='Number of data samples for statistical analysis.')
 	parser.add_argument('-F',dest='samplingFreq', type=float, required=True, help='Sampling frequency in MS/s.')
 	parser.add_argument('-v', dest='voltage', type=float, required=True, help='Voltage to power up the board')
-	parser.add_argument('-c', dest='captureLen', type=float, required=True, help='Capture duration in msec')
+	parser.add_argument('-c', dest='captureLen', type=float, required=True, help='Capture duration of each waveform in msec')
 
 	args = parser.parse_args()
 	THRESHOLD = args.threshold
@@ -199,17 +197,17 @@ if __name__ == "__main__":
 	em = energyMeasure()
 	em.openScope()
 	try:
-		while (1):
-			em.armMeasure()
+			start= time.time()
 			em.measure(args.experimentName)
+			end= time.time()
+			print("Execution time=",end-start)
+			em.plotformat()
 		
 		#em.output(FILENAME,args.experimentName,args.voltage,THRESHOLD)
 	except KeyboardInterrupt:
-		em.output(FILENAME,args.experimentName,args.voltage,THRESHOLD)
-		"""fig = pl.figure()
-		pl.plot(em.allvalues)
-		pl.savefig("fig\currentconsumption"+str(em.numberOfSamples)+args.experimentName+".png")
-		fig.clf()
-		pl.close()"""
+		end= time.time()
+		print("Execution time=",end-start)
+		em.plotformat()
+		#em.output(FILENAME,args.experimentName,args.voltage,THRESHOLD)
 		pass
 	em.closeScope()

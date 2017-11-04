@@ -44,8 +44,8 @@ time.sleep(2)
 
 
 
-py.poke_memory(py.ANSELC_ADDR, ~(1 << 7))
-py.mask_bits_in_memory(py.PORTC_ADDR, ~(1 << 7))
+#py.poke_memory(py.ANSELC_ADDR, ~(1 << 7))
+#py.mask_bits_in_memory(py.PORTC_ADDR, ~(1 << 7))
 
 p_out.value(1)
 time.sleep(2)
