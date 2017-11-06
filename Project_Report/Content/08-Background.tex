@@ -26,21 +26,52 @@ GPS consists of 24 satellites that are arranged so that minimum four satellites 
 
 \subsection{Measurement methods}
 
-There are several alternative for measuring the power consumption of a system. This section will give a brief summary of four methods, where three of them are circuit based and the fourth is software based. The circuit alternatives are heavily discussed and explained in \cite{Intersil},\cite{Infineon}, while the software solution are based on Kadayif et al work 
-The power consumption of the GPS can be calculated by using the power relation $P=V*I$, where V is the voltage drop across the GPS and I is the current flowing into the GPS. 
+There are several alternative for measuring the power consumption of a system. This section will give a brief summary of four methods, where three of them are circuit based and the fourth is software based. The circuit alternatives are heavily discussed and explained in \cite{Intersil},\cite{Infineon},\cite{Vishay}, while the software solution are based on Kadayif et al work 
 
 \subsubsection{Shunt resistor}
-A shunt resistor can be used to measure the energy consumption of a load. The resistor is placed in series with the device and the power supply. The shunt can placed either in a high side or low side configuration. A high side configuration is when the resistor placed between the 
+A shunt resistor is often used to measure the energy consumption of a load because of its cost friendly and simple configuration. The shunt is placed in series with the device and the power supply.
+
+If the voltage drop $V_{shunt}$ is measured, the current I can be calculated by Ohms law:\begin{equation}
+V_{shunt}=R_{shunt}*I
+\end{equation}
+
+$R_{shunt}$ should be of a small value so it doesn't interference with the circuit. The power used by the device can then be calculated by using the power relation \begin{equation}
+P=V_{load}*I \\
+\end{equation}
+\begin{equation}
+V_{load}= V_{supply}-V_{shunt}
+\end{equation}
+\newline The resistor value of the shunt should be of a small value to minimize the power dissipated by the shunt. In \cite{Intersil} it is explained how the resistance value, temperature coefficient and the temperature resistance of the shunt resistor will affect the accuracy of the measurement:
+\begin{equation}
+\Delta R= R_{initial}* \Delta T * T_{coefficient}\\
+\label{rchange}
+\end{equation}
+\begin{equation}
+ \Delta T = \theta * I^{2}*R_{sense}
+\end{equation}
+
+The temperature change in the shunt comes mainly from the heat of the power dissipation that is caused by the current flowing into it. A smaller package has a higher thermal resistance $\theta$ and therefore a higher resistance change when power dissipation increases. Figure \ref{fig:Powererror} from \cite{Intersil} shows the error of three different shunt resistors with different packages. 
+
+\begin{minipage}[t]{0.8\textwidth}
+\centering
+    \includegraphics[width=0.8\textwidth]{Images/Powererror.PNG}\\
+    \captionsetup{justification=centering}
+    \captionof{figure}{The measurement error of three shunt resistors with different packages from \cite{Intersil}}
+    \label{fig:Powererror}
+\end{minipage}
 
 
-The resistor value of the shunt should be of a small value so it doesn't influence the circuit. If the voltage drop $V_{shunt}$ across the resistor is measured, the current I can be calculated by Ohms law: $V_{shunt}=R_{shunt}*I$  where $R_{shunt}$ is a chosen value. The power used by the device can then be calculated by using the power relation $P=V*I$, where V is the voltage drop across the resistor subtracted from the voltage of the power supply. Figure \ref{shunt} shows the shunt resistor together with the load. 
+
+
+The shunt can be placed either in a high side or low side configuration. A low-side shunt has one of its terminals grounded, this configuration might be preferable as the shunt resistor is not exposed of the high common node voltage that might had damage the measurement device. The configuration does also give the measurement device an easy access to common ground so that more signals can be measured at the same time in reference to a stable ground. A high-side configuration places the shunt between the power supply and the load. This might be preferable because it connects the load directly to the ground of the power supply. This configuration enables the shunt to detect leakages that appear before the load, which may have not been detected by the low-side configuration. Figure \ref{fig:shunt} shows the two configurations.
 
 \begin{figure}[h]
 \centering
 \includegraphics[height=4.5cm]{Project_Report/Images/shunt.PNG}
-\caption{The setup for a low-side shunt}
-\label{shunt}
+\caption{The setup for a low-side shunt and a high-side shunt to left and right respectively}
+\label{fig:shunt}
 \end{figure}
+
 
 
 \subsubsection{DCR circuit}
@@ -50,6 +81,21 @@ The resistor value of the shunt should be of a small value so it doesn't influen
 
 
 \subsection{Hall effect}
+The Hall effect can be exploited to measure the current in the circuit. When a current $I$ flows in to a conductor it also changes the magnitude of the magnetic field $H$ proportionately. The relation between the flux density $B$ and $I$ can be expressed as follows:
+
+
+\begin{equation}
+B= \mu_{0}*\mu_{r}*H= \dfrac{\mu{0}*\mu{r}*I}{2\pi r}
+\end{equation}
+
+An Hall effect IC consists of a Hall effect sensor which deliver an output signal which is a linear function with the flux density. The IC is a a loss less system because no resistance is inserted into the circuit and therefore a good method of sensing current without interfering the load.  The IC does also require a field concentrator to boost the flux density for the measurement.
+\begin{figure}[h]
+\centering
+\includegraphics[height=4.5cm]{Project_Report/Images/current.PNG}
+\caption{The induced magnetic field of a conductor from \cite{Infineon}}
+\label{fig:current}
+\end{figure}
+
 
 \subsubsection{Code analysis}
 
