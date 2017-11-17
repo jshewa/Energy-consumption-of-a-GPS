@@ -82,22 +82,22 @@ class energyMeasure():
 			dataA = self.ps.getDataV("A", int(self.capturesampleNo))
 			dataB = self.ps.getDataV("B", int(self.capturesampleNo))
 			self.containerA.append(-dataA)
-			self.containerB.append(-dataB)
+			self.containerB.append(dataB)
 			i=i+1
 
 	def plotformat(self):
 		self.containerA = np.asarray(self.containerA)
 		self.containerB = np.asarray(self.containerB)
 		print("The measurments contains:" + str(len(self.containerA))+"waveforms")                                                   
-
+		fig	= pl.figure(figsize=(20,5))
+		
 		for i in range(len(self.containerA)):
-			print("Working on plotting waveform "+str(i)+"of"+str(len(self.containerA)))
-			fig= pl.figure(figsize=(20,5))   
+			print("Working on plotting waveform "+str(i)+"of"+str(len(self.containerA)-1))  
 			ax 	= 	fig.add_subplot(1,1,1)
 
 			# major ticks every 15, minor ticks every 5                                      
-			ymajor_ticks = np.arange(0, 0.150, 0.015)                                              
-			yminor_ticks = np.arange(0, 0.150, 0.005)
+			ymajor_ticks = np.arange(-0.500, 0.500, 0.020)                                              
+			yminor_ticks = np.arange(-0.500, 0.500, 0.010)
 			
 			xmajor_ticks = np.arange(0, 500, 10)                                              
 			xminor_ticks = np.arange(0, 500, 5)
@@ -115,6 +115,7 @@ class energyMeasure():
 			pl.plot(self.containerB[i], linewidth= 0.5)
 			pl.rc('grid', linestyle="-", color='black')
 			pl.savefig("log\currentconsumption"+str(i)+args.experimentName+".png")
+			#time.sleep(3)
 			pl.clf()
 		pl.close()
                                                  
@@ -202,12 +203,14 @@ if __name__ == "__main__":
 			end= time.time()
 			print("Execution time=",end-start)
 			em.plotformat()
+			em.output()
 		
 		#em.output(FILENAME,args.experimentName,args.voltage,THRESHOLD)
 	except KeyboardInterrupt:
 		end= time.time()
 		print("Execution time=",end-start)
 		em.plotformat()
+		em.output()
 		#em.output(FILENAME,args.experimentName,args.voltage,THRESHOLD)
 		pass
 	em.closeScope()
