@@ -72,7 +72,6 @@ An Hall effect IC consists of a Hall effect sensor which deliver an output signa
 \subsubsection{Software based estimation}
 
 In \cite{EAC} Kadayif et al presents a framework that can estimate and optimize energy consumption of a high level code. The model is validated by using a cycle-accurate architectural-level energy simulator and is within a 6\% error margin.The input to the framework is its program code, architectural, transistor technology, energy model and the energy constraints.The paper uses a five staged pipeline datapath for the architectural parameter with a 0.35 micro transistor technology. The energy model that the framework uses is the sum of the energy consumed in different components. The components that are used to estimate the energy consumption consist of datapath, bus, main memory, cache and a clock network. Figure \ref{fig:EAC_table} shows the energy-dependent parameters of each component in the energy model and how they can be extracted from the high level code. The energy constraints are only used if optimization of the code is desired. 
-
 \begin{figure}[H]
 \centering
 \includegraphics[height=4.5cm]{Project_Report/Images/EAC_table.PNG}
