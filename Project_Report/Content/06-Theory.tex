@@ -35,9 +35,9 @@ GPS consists three segments: space segment, control segment and the user segment
 \end{figure}
 
 After synchronizing the clock, the receiver determines the position and continues to search for other satellites signals. The receiver goes back to acquisition state if it doesn't detect minimum four strong satellite signals.
-Most receivers uses two separate engines for acquisition and tracking, the acquisition is usually the more power hungry of the two states.The time the receiver spends in acquisition state depends on three scenarios:
+Most receivers uses two separate engines for acquisition and tracking, the acquisition is usually the more power hungry of the two states.The time to first fix (TTFF) depends on three scenarios:
 \begin{itemize}
-\item Cold start: This is the same as a factory reset. The receiver doesn't have the last positional fix, the time or any satellite data of the constellation. Standard time to first fix(TTFF) is about 1 minute.
+\item Cold start: This is the same as a factory reset. The receiver doesn't have the last positional fix, the time or any satellite data of the constellation. Standard time to first fix  is about 1 minute.
 \item Warm start: Last position,time and the Almanac is valid. The receiver does only have to download the Ephirems from the satellites. Standard estimation of TTFF is around 35s.
 \item Hot start: When the previous fix was about one second ago, all the data is valid and the estimated time to next fix is 1 second. 
 
