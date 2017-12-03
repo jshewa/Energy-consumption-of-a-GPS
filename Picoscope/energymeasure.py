@@ -61,12 +61,13 @@ class energyMeasure():
 		return drop
 
 	def computeMeanAndStdevSubChannel(self,subChannelA, to):
-		
-		self.mCurr.append(np.mean(subChannelA))
-		self.sdCurr.append(np.std(subChannelA))
-		fs = self.sampleRate / 1000
-		self.mDur.append(to / fs)
-		self.allvalues.append(subChannelA)
+		for i in range(len(self.containerA)):
+			
+			self.mCurr.append(np.mean(subChannelA))
+			self.sdCurr.append(np.std(subChannelA))
+			fs = self.sampleRate / 1000
+			self.mDur.append(to / fs)
+			self.allvalues.append(subChannelA)
 
 		print ("Number of samples: ", fs)
 		print ("Duration: ", to / fs)
@@ -214,3 +215,5 @@ if __name__ == "__main__":
 		#em.output(FILENAME,args.experimentName,args.voltage,THRESHOLD)
 		pass
 	em.closeScope()
+
+	#python energymeasure.py -e idag -t 0 -s 1 -F 0.005 -v 1 -c 100
