@@ -46,34 +46,6 @@ class energyMeasure():
 		self.ps.runBlock()
 
 
-	def rms(self,DATA):
-		rms_val=0.0000000000000
-		for i in range(len(DATA)):
-			rms_val += math.pow(DATA[i],2)
-		rms_val= rms_val/len(DATA)
-		rms_val = math.sqrt(float(rms_val))
-		return rms_val
-
-	def voltagedrop(self, DATAA,DATAB):
-		drop=[]
-		for i in range(len(DATAA)):
-			drop.append(float(DATAA[i]-DATAB[i]))
-		return drop
-
-	def computeMeanAndStdevSubChannel(self,subChannelA, to):
-		for i in range(len(self.containerA)):
-			
-			self.mCurr.append(np.mean(subChannelA))
-			self.sdCurr.append(np.std(subChannelA))
-			fs = self.sampleRate / 1000
-			self.mDur.append(to / fs)
-			self.allvalues.append(subChannelA)
-
-		print ("Number of samples: ", fs)
-		print ("Duration: ", to / fs)
-		print("MeanCurrent:", np.mean(subChannelA))
-		print("StandardDeviation:", np.std(subChannelA))
-
 	def measure(self, filename):
 		#setting the maximum number of waveform = 3000 -> 5min*60s*1000*ms*100= 300 000 waveforms
 		i=0
@@ -121,8 +93,59 @@ class energyMeasure():
 		pl.close()
                                                  
 
+	#Function used for viewing data after it has been analyzed
+	def calculate_energy_consumption(self):
+		fix_period=[1,10,60,1800,3600,14399,14400,15551700,15552000]
+		t= [60,3600,86400,2592000,31536000]
+		v_sleep, T_sleep, v_wake,T_wake,v_acq, T_acq, v_track, T_track = 2*1E-3,0,93.45*1E-3,4,79*1E-3,0,72*1E-3,1
 
-	def output(self, filename, x, y, z):
+		P_sleep = v_sleep*v_sleep
+		P_wake  = v_wake*v_wake
+		P_acq   = v_acq*v_acq
+		P_track = v_track*v_track
+		
+		print(P_sleep)
+		print(P_wake)
+		print(P_acq)
+		print(P_track)
+
+		columns,rows= len(fix_period),len(t)
+		Energy_consumption = [[0 for x in range(columns)] for y in range(rows)]
+		print(Energy_consumption)
+
+		i_iterator= 0
+		j_iterator= 0
+
+		for i in t:
+			for j in fix_period:
+				if(j_iterator>columns-1):
+					j_iterator = 0   
+				if((j<5) or (j>i) ):
+					print(i_iterator,j_iterator)
+					Energy_consumption[i_iterator][j_iterator]= -1
+					j_iterator = j_iterator +1
+					continue
+				elif(j<14400):
+					T_acq   = 1
+				elif (j>14399 and j<15552000):
+					T_acq   = 30      
+				elif(j == 15552000):
+					T_acq   = 35
+				print("i",i)
+				print("j=",j)
+				print("T_acq=",T_acq)
+				print("T_wake=",T_wake)
+				print("T_track= ", T_track)
+				T_sleep     = j - T_wake - T_acq - T_track 
+				print("T_sleep=", T_sleep)
+				Energy_consumption[i_iterator][j_iterator] = (P_sleep*T_sleep + P_wake*T_wake + P_acq*T_acq + P_track*T_track)*i/j
+				print("Energy_consumption:",Energy_consumption[i_iterator][j_iterator])
+				j_iterator = j_iterator +1
+
+			i_iterator = i_iterator +1
+			if(i_iterator>rows-1):
+				i_iterator = 0  
+		print (Energy_consumption)
 		book = xlwt.Workbook()
 		sh = book.add_sheet("Sheet 1")
 		style = xlwt.XFStyle()
@@ -130,55 +153,11 @@ class energyMeasure():
 		font = xlwt.Font()
 		font.bold = True
 		style.font = font
-		variables = [x, y, z, (self.sampleRate/1E6), self.captureLength * 1E3, self.capturesampleNo]
-		desc = ['TextName', 'Voltage(V)', "Thresh_Vol", "Sampling Freq", "Capture Length(ms)", "Capture Samples/calc"]
-		
-		for n, (v_desc, v) in enumerate(zip(desc, variables)):
-			sh.write(n, 0, v_desc, style=style)
-			sh.write(n, 1, v)
-		n+=2
-		sh.write(n,0,'Allvalues', style =style)
-		index =1
-		for m,e1 in enumerate(self.allvalues, n):
-			sh.write(m, 0, 'allvalues'  + str(index))
-			sh.write(m, 1, e1)
-			print (m)
-			print (e1)
-			index += 1
-		book.save(filename)
-"""		sh.write(n, 0, 'SampleDuration(ms)', style=style)
-		sh.write(n, 1, 'Duration(ms)', style=style)
-		sh.write(n, 2, 'MeanCurrent(A)', style=style)
-		sh.write(n, 3, 'StandardError',style=style)
-		index = 1
-		for m, e1 in enumerate(self.mDur, n+1):
-			sh.write(m, 0, 'Sample'  + str(index))
-			sh.write(m, 1, e1)
-			index += 1
-		
-		for m, e2 in enumerate(self.mCurr, n+1):
-			sh.write(m, 2, (e2))
-		for m, e3 in enumerate(self.sdCurr, n+1):
-			sh.write(m, 3, e3)
-
-		m += 2
-		sh.write(m,0,"Average", style=style)
-		sh.write(m,1,np.mean(self.mDur))
-		sh.write(m,2,np.mean(self.mCurr))
-		sh.write(m,3,np.mean(self.sdCurr))
-		
-		power = np.mean(self.mCurr) * y
-		m+=3
-		sh.write(m,0,"Power(Watt)", style=style)
-		sh.write(m,1, power)
-
-		energy = (np.mean(self.mDur)/1000) * y * np.mean(self.mCurr)
-		m+=1
-		sh.write(m,0,"Energy(J)", style=style)
-		sh.write(m,1, energy)"""
-
-		#book.save(filename)
-
+    
+		for i in range(columns):
+			for j in range(rows):
+				sh.write(i,j,Energy_consumption[j][i])
+		book.save('dataa.xls')
 
 if __name__ == "__main__":
 
