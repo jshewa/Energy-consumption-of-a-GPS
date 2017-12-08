@@ -1,14 +1,12 @@
 \chapter{Measuring platform}
 
-The method of shunt resistor was chosen to measure the energy consumption of the GPS system. The shunt resistor was chosen due to its low complexity and error rate compared to the Hall effect IC. The other software estimation techniques and cycle aware techniques wasn't chosen as they either tries to estimate the energy consumption with poor accuracy or they need non available RTL level information about the design. The shunt resistor threats the system that is getting measured as a black box, which enables the measuring platform to be used with any system. Two configurations of the measurement platform with a shunt resistor was developed. 
+The method of shunt resistor was chosen to measure the energy consumption of the GPS system. The shunt resistor was chosen due to its low complexity and error rate compared to the Hall effect IC. The other software estimation techniques and cycle aware techniques wasn't chosen as they either tries to estimate the energy consumption with poor accuracy or they need non available RTL level information about the design. The shunt resistor threats the system that is getting measured as a black box, which enables the measuring platform to be used with any system. Two configurations of the measurement platform with a shunt resistor was developed.
 
-\section{Configuration options}
- Two configurations of the measurement platform with shunt resistor was developed. The first used a C027 application board from u-blox, while the other used a LoPy microcontroller from PyCom.Both methods used a PC and a Oscilloscope. This section will explain functionality of each component of the measurement platfrom.
- 
- \subsection{PicoScope 640 AD}
-PicoScope 6000 from Picotecnology is a 4 channel digital oscilloscope with 5GS/s sampling and 2 GSample buffer memory \cite{Pico}. The oscilloscope is equipped with USB 3.0 and supplied with an SDK that enables the user to write their own software. The PicoScope has advanced trigger possibilities and a bandwidth of 500MHz along with a signal generator. The oscilloscope is used to measure the voltage drop across the shunt resistor.  
 
-\subsection{PC with python script}
+\section{PicoScope 640 AD}
+PicoScope 6000 from Picotecnology is a 4 channel digital oscilloscope with 5GS/s sampling and 2 GSample buffer memory \cite{Pico}. The oscilloscope is equipped with USB 3.0 and supplied with an SDK that enables the user to write their own software. The PicoScope has advanced trigger possibilities and a bandwidth of 500MHz along with a signal generator. The oscilloscope is used to measure the voltage drop across the shunt resistor.   
+
+\section{PC with python script}
 A Python script that uses the SDK from Picoscope is executed on the PC. The script is a modified version of Amen Hussain's energy measure script \cite{Amen}. The script measures the voltage drop over the shunt resistor by using the following parameters:
 
 \begin{itemize}
@@ -16,7 +14,9 @@ A Python script that uses the SDK from Picoscope is executed on the PC. The scri
     \item duration- The length of each waveform
     
 \end{itemize}
-The Python script generates a plot shown in figure \ref{fig:pythonwaveform}
+
+The sampling and duration is used to generate a waveform of the sampled data. The script samples the data and puts in a list before it restarts the sampling for the next waveform. A overhead of storing data and initializing the oscilloscope before each sample introduces a limit for the processing speed of the measurements. The measured delay caused by the overhead in software is between 30-50 ms. This means that some data is not captured during the overhead process.
+The Python script generates a plot after the data has been analyzed \ref{fig:pythonwaveform}
 
 \begin{figure}[H]
 \centering
@@ -26,7 +26,12 @@ The Python script generates a plot shown in figure \ref{fig:pythonwaveform}
 \end{figure}
  
 
-\section{Configuration with C027}
+\section{Configuration options}
+ Two configurations of the measurement platform with shunt resistor was developed. The first used a C027 application board from u-blox, while the other used a LoPy microcontroller from PyCom.Both methods used a PC and a Oscilloscope. This section will explain functionality of each component of the measurement platfrom.
+ 
+
+
+\subsection{Configuration with C027}
 Figure \ref{fig:deploy_C027} shows the deployment diagram of the configuration with the C027 development kit.  
 
 \begin{figure}[H]
@@ -58,7 +63,7 @@ Difficult debugging, short circuiting of the PC and a too complex configuration 
 
 
 
-\section{Configuration with LoPy}
+\subsection{Configuration with LoPy}
 Another option for the measurement platform was a circuit with the LoPy microcontroller from Pycom.An overview over the measurement platform is shown in \ref{fig:LoPy_deploy}. 
 
 \begin{figure}[H]

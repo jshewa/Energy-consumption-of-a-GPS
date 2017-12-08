@@ -20,21 +20,27 @@ GPS consists three segments: space segment, control segment and the user segment
 
 
  The distance between the satellite and the receiver are needed for using the method of resection.The Pseudorange is used for measuring the distance by assuming that the clock of the receiver and satellite are synchronized. It is called for pseudorange since they are actually not perfectly synchronized. The receiver can produce the digital codes at the same time instant that the satellites transmits them from space.The distance can be calculated by measuring the difference in delay of the transmitted signal from the produced one. The clocks is actually not perfectly synchronized and this is reason for the name pseudorange. \\
- A method for determining the velocity of a receiver is by estimating the Doppler frequency of the received signal. The Doppler shift is caused by the relative motion of the receiver and the SV. The two carrier frequencies L1 and L2 that the satellites transmits are generated at 1.5 MHz and 1,2 MHz respectively.  Each SV transmits the L1 and L2 signal but the code modulation for each is different to avoid interference. The two digital code coarse acquisition code (C/A) and precision code(P) consists of a stream of binary digits. The codes are generated using an algorithm and enables a receiver to distinguish the satellites since each have their own set of codes. The navigation message contains the ephemeris, the almanac, the health of the SV, the clock correction, and the atmospheric data.The Ephemeris is the precise information about the orbital position and clock correction for the specific satellite. The Almanac is a coarse orbital data of all the satellites in constellation. The Ephemeris is only valid for four hours and is sent every 30  second, while the Almanac is valid for 180 days and is sent every 12.5 minutes. \\
+ A method for determining the velocity of a receiver is by estimating the Doppler frequency of the received signal. The Doppler shift is caused by the relative motion of the receiver and the SV. Figure \ref{modulation} shows the generated signals that are sent from each satellite. 
+ 
+ \begin{figure}[H]
+\centering
+\includegraphics[width=16 cm]{Project_Report/Images/code_data.png}
+\caption{The modulation of GPS signals}
+\label{fig:modulation}
+\end{figure}
+
+ 
+ 
+ 
+ The two carrier frequencies L1 and L2 that the satellites transmits are generated at 1.5 MHz and 1,2 MHz respectively.  Each SV transmits the L1 and L2 signal but the code modulation for each is different to avoid interference. The two digital code coarse acquisition code (C/A) and precision code(P) consists of a stream of binary digits. The codes are generated using an algorithm and enables a receiver to distinguish the satellites since each have their own set of codes. The navigation message contains the ephemeris, the almanac, the health of the SV, the clock correction, and the atmospheric data.The Ephemeris is the precise information about the orbital position and clock correction for the specific satellite. The Almanac is a coarse orbital data of all the satellites in constellation. The Ephemeris is only valid for four hours and is sent every 30  second, while the Almanac is valid for 180 days and is sent every 12.5 minutes. \\
  The control segment of the GPS system consists of a number of world wide positioned tracking station and a master control station located in the United States. The control segment tracks the satellites to predict their location, control the atomic clock and satellite data that is transmitted by the SV. \\ The user segment is all GPS receivers that is used to determine their position.
   
   
-  \subsection{Acquisition and Tracking}
+ \subsection{Acquisition and Tracking}
   
-  The state diagram of a GPS receiver consists of two distinct states, the acquisition and tracking states shown in figure \ref{fig:GPS reciever}. The acquisition state is the first state that the receiver goes to after start up. This is the state where the receiver searches and tries to detect the C/A codes from the satellites. After detecting and receiving satellite data from minimum four satellites the receiver goes to the tracking state.
- \begin{figure}[H]
-\centering
-\includegraphics[width=16 cm]{Project_Report/Images/gps_basics.PNG}
-\caption{The state diagram of a GPS receiver}
-\label{fig:GPS reciever}
-\end{figure}
+The state diagram of a GPS receiver consists of two distinct phases, acquisition and tracking. Acquisition is the initial phase after start up. This is where the receiver searches and tries to detect the C/A codes from the satellites. After detecting and receiving satellite data from minimum four satellites the receiver starts the tracking phase.
 
-After synchronizing the clock, the receiver determines the position and continues to search for other satellites signals. The receiver goes back to acquisition state if it doesn't detect minimum four strong satellite signals.
+After synchronizing the clock, the receiver determines the position and continues to search for other satellites signals. The receiver starts acquisition phase if it doesn't detect minimum four strong satellite signals.
 Most receivers uses two separate engines for acquisition and tracking, the acquisition is usually the more power hungry of the two states.The time to first fix (TTFF) depends on three scenarios:
 \begin{itemize}
 \item Cold start: This is the same as a factory reset. The receiver doesn't have the last positional fix, the time or any satellite data of the constellation. Standard time to first fix  is about 1 minute.
