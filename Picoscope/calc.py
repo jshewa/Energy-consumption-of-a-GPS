@@ -46,6 +46,7 @@ def calculate_energy_consumption():
             T_sleep     = j - T_wake - T_acq - T_track 
             print("T_sleep=", T_sleep)
             Energy_consumption[i_iterator][j_iterator] = (P_sleep*T_sleep + P_wake*T_wake + P_acq*T_acq + P_track*T_track)*i/j
+            print("plot of temp",P_sleep*T_sleep + P_wake*T_wake + P_acq*T_acq + P_track*T_track )
             print("Energy_consumption:",Energy_consumption[i_iterator][j_iterator])
             j_iterator = j_iterator +1
 
@@ -66,7 +67,21 @@ def calculate_energy_consumption():
             sh.write(i,j,Energy_consumption[j][i])
     book.save('dataa.xls')
 
+    temp    =   Energy_consumption[4][5]
+    optimal     =   Energy_consumption[4][6]
+    fix_o = 14400
+
+    while(temp<optimal):  
+        T_sleep = fix_o - T_wake - 30 - T_track
+        optimal = (P_sleep*T_sleep + P_wake*T_wake + P_acq*T_acq + P_track*T_track)*t[4]/fix_o
+        print(optimal)
+        fix_o = fix_o + 1
+
+    print("Limit ara:",fix_o)
+    
+    plot_data = [0 for x in range(100000)]
+    for i in range(len(plot_data)):
+        
+
 
 calculate_energy_consumption()
-
-
