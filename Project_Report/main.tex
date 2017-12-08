@@ -1,16 +1,117 @@
+\documentclass[abstract=on]{scrreprt}
+%\documentclass[abstract=on]{book}
+%https://en.wikibooks.org/wiki/LaTeX/Document_Structure
 
-\documentclass[abstract=on,a4paper]{scrreprt}
+%---------------- lagt til mal -------------------
+\usepackage{amsmath}%math env++
+\usepackage{bm}%bold math for vectors
+\usepackage{amssymb}%for other math symbols
+\usepackage[section]{placeins}%forhindrer floats over sections
+
+%--------------- Tilhørende mal ------------------
 \usepackage[utf8]{inputenc}
-\usepackage{caption}
-
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{setspace}
+\usepackage[sort=def, nonumberlist, nopostdot]{glossaries}
 \usepackage{natbib}
 \usepackage{graphicx}
-\usepackage{tikz}
-\usepackage{pgfplots}
-\pgfplotsset{compat=1.12}
-\usepackage{textcomp}
+\usepackage{geometry}
+\usepackage{pdflscape}
+\usepackage{caption}
+\usepackage{multirow}
 \usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usepackage{wrapfig}
+\usepackage{chngcntr}
+\usepackage{comment}
+\usepackage[toc, page]{appendix}
+\usepackage{titlesec}
+\usepackage{color,colortbl}
 
+% spacing: how to read {12pt plus 4pt minus 2pt}
+%           12pt is what we would like the spacing to be
+%           plus 4pt means that TeX can stretch it by at most 4pt
+%           minus 2pt means that TeX can shrink it by at most 2pt
+%       This is one example of the concept of, 'glue', in TeX
+\titlespacing\section{0pt}{10pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+\titlespacing\subsection{0pt}{8pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+
+\makeatletter
+\g@addto@macro{\UrlBreaks}{\UrlOrds}
+\makeatother
+
+\renewcommand{\abstractname}{} 
+\renewcommand{\glossarysection}[2][]{}
+\newcommand{\heart}{\ensuremath\heartsuit}
+
+\lstset{basicstyle=\ttfamily}
+
+% paragraph indentation
+\setlength{\parindent}{0em} 
+
+% paragraph spacing
+\setlength{\parskip}{1.2em}
+
+% table cell spacing
+\setlength{\tabcolsep}{0.4em}
+\renewcommand{\arraystretch}{1}
+
+% list spacing
+\setitemize[0]{leftmargin=1.5em, itemsep=-0.5em, topsep=-0.4em}
+
+% normal line spacing
+\renewcommand{\baselinestretch}{1.1}
+
+ % Next level after subsection
+ \newcommand{\paragraphsection}[1]{\paragraph{#1}\mbox{}\\[0.2cm]}
+ \renewcommand*{\glossaryname}{Other}
+ 
+\RedeclareSectionCommand[beforeskip=2\baselineskip, afterskip=1\baselineskip]{chapter}
+
+
+\makeatletter
+\renewcommand{\@chapapp}{}% Not necessary...
+\newenvironment{chapquote}[2][2em]
+  {\setlength{\@tempdima}{#1}%
+   \def\chapquote@author{#2}%
+   \parshape 1 \@tempdima \dimexpr\textwidth-2\@tempdima\relax%
+   \itshape}
+  {\par\normalfont\hfill--\ \chapquote@author\hspace*{\@tempdima}\par\bigskip}
+\makeatother
+
+\newcommand{\doubleSignature}[3]{
+\vspace{1.5cm}
+
+\noindent
+\begin{tabular}{lcl}
+    \rule{5cm}{1pt} & \hspace{2cm} & \rule{5cm}{1pt} \\
+    #2 & & #3
+\end{tabular}
+}
+
+\newcommand{\singleSignature}[2]{
+\vspace{1.5cm}
+
+\noindent
+\begin{tabular}{l}
+    \rule{5cm}{1pt} \\
+    #2
+\end{tabular}
+}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\definecolor{red}{rgb}{1,0,0}
+
+
+
+\renewcommand{\bibname}{References}
 
 % Edit the meta.tex file to change title, group number and author names 
 \input{meta.tex}
@@ -30,11 +131,16 @@
 \input{Content/04-Table-of-contents.tex}
 \input{Content/05-Introduction.tex}
 \input{Content/06-Theory.tex}
-\input{Content/07-Energy-modeling.tex}
+\input{Content/07-Measurement-methods.tex}
 \input{Content/08-Implementation.tex}
+\input{Content/09-Measurments.tex}
+\input{Content/10-Energy-modeling.tex}
+\input{Content/11-Discussion-and-conclusion.tex}
 
 
 % Bibliography - edit references.bib and use the \cite command in text
 \bibliographystyle{plain}
 \bibliography{Content/references.bib}
+\input{Content/Appendix.tex}
+
 \end{document}
