@@ -15,14 +15,36 @@ from network import Bluetooth
 # setup as a station
 #"address": "192.168.4.1"
 import gc
-#intialize the trigger output and the Pytrack/GPS
+
+
+
+rtc = machine.RTC()
+rtc.ntp_sync("pool.ntp.org")
+utime.sleep_ms(750)
+print('\nRTC Set from NTP to UTC:', rtc.now())
+utime.timezone(7200)
+print('Adjusted from UTC to EST timezone', utime.localtime(), '\n')
+
+
+# initialize ``P9`` in gpio mode and make it an output
 p_out = Pin('P20', mode=Pin.OUT)
 p_out.value(0)
+#Turn off all communication protocols
+wlan= WLAN()
+wlan.deinit()
+bt = Bluetooth()
+bt.deinit()
+
 py = Pytrack()
 l76 = L76GNSS(py)
+#send cold start request
+py.setup_sleep(60)
+l76.write_gps(l76.COLD_START,False)
 time.sleep(2)
+p_out.value(1)
+time.sleep(2)
+p_out.value(0)
 while (True):
-    #Toggle the trigger when a fix acquried
     coord = l76.coordinates()
     print ("FIX:jared ", l76.fix)
     if ((l76.fix) and not(l76.first_fix)):
@@ -32,3 +54,4 @@ while (True):
         p_out.value(1)
         time.sleep(0.25)
         p_out.value(0)
+        py.go_to_sleep(True):

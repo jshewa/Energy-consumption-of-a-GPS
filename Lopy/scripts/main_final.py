@@ -39,17 +39,19 @@ bt.deinit()
 
 py = Pytrack()
 l76 = L76GNSS(py)
-py.setup_sleep(60)
+py.setup_sleep(2)
 
 
 l76.write_gps(l76.COLD_START,False)
 time.sleep(2)
+
 
 p_out.value(1)
 time.sleep(2)
 p_out.value(0)
 
 
+print("after init")
 while (True):
 
     coord = l76.coordinates()
@@ -61,3 +63,4 @@ while (True):
         p_out.value(1)
         time.sleep(0.25)
         p_out.value(0)
+        py.go_to_sleep(True)

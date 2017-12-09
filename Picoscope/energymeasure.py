@@ -30,7 +30,7 @@ class energyMeasure():
 		self.ps.open()
 
 		self.ps.setChannel("A", coupling="DC", VRange=1, probeAttenuation=10)
-		self.ps.setChannel("B", coupling = "DC", VRange = 1 , probeAttenuation=10)
+		self.ps.setChannel("B", coupling = "DC", VRange = 5 , probeAttenuation=10)
 		self.ps.setChannel("C", enabled= False)
 		self.ps.setChannel("D", enabled=False)
 		res = self.ps.setSamplingFrequency(self.samplingfreq * 1E6,int(self.capturesampleNo))
@@ -49,7 +49,7 @@ class energyMeasure():
 	def measure(self, filename):
 		#setting the maximum number of waveform = 3000 -> 5min*60s*1000*ms*100= 300 000 waveforms
 		i=0
-		while(i<300000):
+		while(1):
 			self.armMeasure()
 			while(self.ps.isReady() == False):pass
 			dataA = self.ps.getDataV("A", int(self.capturesampleNo))
@@ -65,12 +65,17 @@ class energyMeasure():
 		fig	= pl.figure(figsize=(20,5))
 		
 		for i in range(len(self.containerA)):
+			self.containerB[i][self.containerB[i] < 0.15] = 0
 			print("Working on plotting waveform "+str(i)+"of"+str(len(self.containerA)-1))  
 			ax 	= 	fig.add_subplot(1,1,1)
 
-			# major ticks every 15, minor ticks every 5                                      
-			ymajor_ticks = np.arange(-0.500, 0.500, 0.020)                                              
-			yminor_ticks = np.arange(-0.500, 0.500, 0.010)
+			# major ticks every 15, minor ticks every 5
+			if(np.amax(self.containerB[i])>0.15):
+				ymajor_ticks = np.arange(0, 5, 1)
+				yminor_ticks = np.arange(0, 5, 0.25)
+			else:
+				ymajor_ticks = np.arange(0, 0.500, 0.05)                                              
+				yminor_ticks = np.arange(0, 0.500, 0.020)
 			
 			xmajor_ticks = np.arange(0, 500, 10)                                              
 			xminor_ticks = np.arange(0, 500, 5)
@@ -81,7 +86,7 @@ class energyMeasure():
 			ax.set_yticks(yminor_ticks, minor=True)
 			ax.grid(which='minor', alpha=0.2)                                                
 			ax.grid(which='major', alpha=0.5)   
-			pl.suptitle('Waveform ' +str(i), fontsize = 12)
+			pl.suptitle('Waveform ' +str(i+1), fontsize = 12)
 			ax.set_xlabel('Sample number of 100 ms')
 			ax.set_ylabel('Voltage')
 			pl.plot(self.containerA[i], linewidth= 0.5)
@@ -92,6 +97,44 @@ class energyMeasure():
 			pl.clf()
 		pl.close()
                                                  
+	def avgcurrent(self):
+		avgcur= []
+		bcur = []
+		avgpow= []
+		temp_c= 0
+		temp_b = 0
+		temp_p = 0
+		
+		for i in range(len(self.containerA)):
+			temp_c	=	np.average(self.containerA[i])
+			temp_b	=	np.amax(self.containerB[i])
+			temp_p	=	temp_c*temp_c
+			avgcur.append(temp_c)
+			bcur.append(temp_b)
+			avgpow.append(temp_p)
+		
+		book = xlwt.Workbook()
+		sh = book.add_sheet("Sheet 1")
+		style = xlwt.XFStyle()
+		# font
+		font = xlwt.Font()
+		font.bold = True
+		style.font = font
+		sh.write(0,0,"Name of experiment",style=style)
+		sh.write(0,1,args.experimentName,style=style)
+		sh.write(1,0,"Waveform",style=style)
+		sh.write(1,1,"AvgCurrent(A)",style=style)
+		sh.write(1,2,"AvgPower(W)",style=style)
+		sh.write(1,3,"AvgCurrentB",style=style)
+		
+		print("Making excel document")
+		for i in range(len(avgcur)):
+			sh.write(2+i,0,i+1)
+			sh.write(2+i,1,avgcur[i])
+			sh.write(2+i,2,avgpow[i])
+			sh.write(2+i,3,bcur[i])
+		book.save('avgcurrent'+args.experimentName+".xls")
+
 
 	#Function used for viewing data after it has been analyzed
 	def calculate_energy_consumption(self):
@@ -183,14 +226,14 @@ if __name__ == "__main__":
 			end= time.time()
 			print("Execution time=",end-start)
 			em.plotformat()
-			em.output()
+			em.avgcurrent()
 		
 		#em.output(FILENAME,args.experimentName,args.voltage,THRESHOLD)
 	except KeyboardInterrupt:
 		end= time.time()
 		print("Execution time=",end-start)
 		em.plotformat()
-		em.output()
+		em.avgcurrent()
 		#em.output(FILENAME,args.experimentName,args.voltage,THRESHOLD)
 		pass
 	em.closeScope()
