@@ -20,7 +20,6 @@ p_out = Pin('P20', mode=Pin.OUT)
 p_out.value(0)
 py = Pytrack()
 l76 = L76GNSS(py)
-time.sleep(2)
 while (True):
     #Toggle the trigger when a fix acquried
     coord = l76.coordinates()

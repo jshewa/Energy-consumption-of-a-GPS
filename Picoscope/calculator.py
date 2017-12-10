@@ -77,7 +77,7 @@ def calculate_energy_consumption():
         print(optimal)
         fix_o = fix_o + 1
 
-    print("Limit updating period :" + str(fix_o) +" seconds" )
+    print("Limit ara:",fix_o)
 
         
 calculate_energy_consumption()

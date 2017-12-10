@@ -228,13 +228,11 @@ if __name__ == "__main__":
 			em.plotformat()
 			em.avgcurrent()
 		
-		#em.output(FILENAME,args.experimentName,args.voltage,THRESHOLD)
 	except KeyboardInterrupt:
 		end= time.time()
 		print("Execution time=",end-start)
 		em.plotformat()
 		em.avgcurrent()
-		#em.output(FILENAME,args.experimentName,args.voltage,THRESHOLD)
 		pass
 	em.closeScope()
 
