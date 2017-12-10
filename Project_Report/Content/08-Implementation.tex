@@ -7,7 +7,7 @@ The method of shunt resistor was chosen to measure the energy consumption of the
 PicoScope 6000 from Picotecnology is a 4 channel digital oscilloscope with 5GS/s sampling and 2 GSample buffer memory \cite{Pico}. The oscilloscope is equipped with USB 3.0 and supplied with an SDK that enables the user to write their own software. The PicoScope has advanced trigger possibilities and a bandwidth of 500MHz along with a signal generator. The oscilloscope is used to measure the voltage drop across the shunt resistor.   
 
 \section{PC with python script}
-A Python script that uses the SDK from Picoscope is executed on the PC. The script is a modified version of Amen Hussain's energy measure script \cite{Amen}. The script measures the voltage drop over the shunt resistor by using the following parameters:
+A Python API that uses the SDK from Picoscope is executed on the PC. The script is a modified version of the framework from Picoscope. The script is included in the appendix \ref{Appendix:EnergyMeasure.py}. The script measures the voltage drop over the shunt resistor by using the following parameters:
 
 \begin{itemize}
     \item sampling- The sampling frequency 
