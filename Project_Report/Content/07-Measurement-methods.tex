@@ -14,7 +14,8 @@ P=V_{load}*I \\
 \begin{equation}
 V_{load}= V_{supply}-V_{shunt}
 \end{equation}
-\newline The resistor value of the shunt should be of a small value to minimize the power dissipated by the shunt. In \cite{Intersil} it is explained how the resistance value, temperature coefficient and the temperature resistance of the shunt resistor will affect the accuracy of the measurement:
+
+ The resistor value of the shunt should be of a small value to minimize the power dissipated by the shunt. From \cite{Intersil}, we get the relation between temperature coefficient, temperature resistance and resistance value:
 \begin{equation}
 \Delta R= R_{initial}* \Delta T * T_{coefficient}\\
 \label{rchange}
@@ -34,13 +35,13 @@ The temperature change in the shunt comes mainly from the heat of the power diss
 \end{minipage}
 
 
-The shunt can be placed either in a high side or low side configuration. A low-side shunt has one of its terminals grounded, this configuration might be preferable as the shunt resistor is not exposed of the high common node voltage that might had damage the measurement device. The configuration does also give the measurement device an easy access to common ground so that more signals can be measured at the same time in reference to a stable ground.A high-side configuration places the shunt between the power supply and the load. This might be preferable because it connects the load directly to the ground of the power supply. This configuration enables the shunt to detect leakages that appear before the load, which may have not been detected by the low-side configuration. Figure \ref{fig:shunt} shows the two configurations. \hfill \break
+The shunt can be placed either in a high side or low side configuration. A low-side shunt has one of its terminals grounded, this configuration might be preferable as the shunt resistor is not exposed of the high common node voltage that might damage the measurement device. The configuration does also give the measurement device an easy access to common ground, so that more signals can be measured at the same time in reference to a stable ground.A high-side configuration places the shunt between the power supply and the load. This might be preferable because it connects the load directly to the ground of the power supply. This configuration enables the shunt to detect leakages that appear before the load, which may have not been detected by the low-side configuration. Figure \ref{fig:shunt} shows the two configurations. \hfill \break
 
 
 \begin{figure}[h]
 \centering
 \includegraphics[height=4.5cm]{Project_Report/Images/shunt.PNG}
-\caption{The setup for a low-side shunt and a high-side shunt to left and right respectively}
+\caption{The setup for a high-side shunt and a low-side shunt to left and right respectively}
 \label{fig:shunt}
 \end{figure}
 
