@@ -1,18 +1,38 @@
+%\begin{table}[h!]
+%\begin{center}
+ %\begin{tabular}{||c c c c||} 
+ %\hline
+ %Waveform & AvgCurrentA(A) & Power(W) & AvgCurrentB(A) \\ [0.5ex] 
+ %\hline\hline
+ %4827 & 0.0831 & 0.0069 & 0 \\
+ %\hline
+ %4828 & 0.0822 & 0.0067 & 0 \\
+ %\hline
+ %4829 & 0.0833 & 0.0069 & 0 \\
+ %\hline
+ %4830 & 0.0822 & 0.0067 & 0 \\
+ %\hline
+ %4831 & 0.0796 & 0.0063 & 0 \\ 
+ %\hline
+ %4832 & 0.0830 & 0.0069 & 0 \\
+ %\hline
+ %\rowcolor{red}
+ %4833 & 0.0759  & 0.0057 & 3.3 \\[1ex]
+ %\hline
+%\end{tabular}
+%\end{center}
+%\caption{The table shows the data when a positional fix is acquired.}
+%\label{Table:wifioff}
+%\end{table}
+
+
+
 \chapter{Measurements}
 
- This chapter presents the results and the program code that was used during the  specific test. 
+ This chapter presents the results and the program code that was used during the  specific test. The first step was to measure the current consumption of the LoPy during a request of positional fix. Measuring of data was done outside with the measurement platform. All the measurements was done under similar weather conditions. 
 
 
-
-
-
-
-\section{Current Consumption}
-
-The first step was to measure the current consumption of the LoPy during a request of positional fix. Measuring of data was done outside with the measurement platform. All the measurements was done under similar weather conditions. 
-
-
-\subsection{Measurement with communication}
+\section{Measurement with communication}
 Program code for getting a positional fix is shown in \ref{code:intial}. The program initialize a GPIO pin that is toggled when the positional fix is acquired. The function coordinates() is from the l76 GNSS class, and sets the class variable fix when the position is received. 
 \lstset{language=Python}          % Set your language (you can change the language for each code-block optionally)
 \begin{lstlisting}[frame=single,caption = main.py]  % Start your code-block
@@ -35,7 +55,7 @@ while (True):
         p_out.value(0)
 \end{lstlisting}
 \label{code:intial}
-After doing some measurements with the program code and analyzing it, it became evident that another power demanding task was running on the LoPy besides the GPS function. The current and power consumption of the 5 first waveforms are shown in table \ref{Table:WIFI_ON}.
+After doing some measurements with the program code and analyzing it, it become evident that another power demanding task is running on the LoPy besides the GPS function. The current and power consumption of the 5 first waveforms are shown in table \ref{Table:WIFI_ON}.
 \begin{table}[h!]
 \begin{center}
  \begin{tabular}{||c c c||} 
@@ -68,7 +88,7 @@ After doing some measurements with the program code and analyzing it, it became 
 \end{table}
 
 The row highlighted in red, is the waveform with the highest average current and power consumption.
-Figure \ref{fig:startup_intial} shows the plot of waveform 6 that is made with \ref{fig:sequence}.
+Figure \ref{fig:startup_intial} shows the plot of waveform 6 that is generated with \ref{fig:sequence}.
 
 
  \begin{figure}[H]
@@ -86,7 +106,7 @@ Figure \ref{fig:startup_intial} shows the plot of waveform 6 that is made with \
  The period of the pulse with a sampling period of 0.2 ms and 100 samples between is:
  
  \begin{equation}
-     p_pulse = 100*0.2 ms = 20 ms
+     p_{pulse} = 100*0.2 ms = 20 ms
  \end{equation}
  After reviewing the results, it becomes obvious that the high average current is due to the disturbance from the periodic signal. The periodic signal makes it difficult to relate the power consumption to the GPS, as it influences the current consumption.
 
@@ -131,32 +151,33 @@ while (True):
 \end{lstlisting}
 \label{code:wifioff}
 
-Figure \ref{fig:WIFI_OFF} shows a screenshot of the generated excel from a test run. The document contains the average current, average power and the value of the trigger signal B for each waveform. The screenshot shows the initializing phase when WIFI and Bluetooth is turned off. 14000 waveforms is sampled during the test run of the program code. A test run lasts for 1 hour.  
+Table \ref{Table:wifioff} shows the average current, average power and the value of the trigger signal B, when a positional fix is acquired. The row that is highlighted in red shows the transition from acquisition phase to tracking phase. 14000 waveforms was sampled during the test run of the program code. A test run lasted for 1 hour.  
 
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=16 cm]{Project_Report/Images/wifioff.PNG}
-\caption{The excel document with the data from a test run}
-\label{fig:WIFI_OFF}
-\end{figure}
-
-Table \ref{Table:wifioff} shows the data when a positional fix is acquired.  
 \begin{table}[h!]
 \begin{center}
  \begin{tabular}{||c c c c||} 
  \hline
  Waveform & AvgCurrentA(A) & Power(W) & AvgCurrentB(A) \\ [0.5ex] 
  \hline\hline
+ 4827 & 0.0831 & 0.0069 & 0 \\
+ \hline
+ 4828 & 0.0822 & 0.0067 & 0 \\
+ \hline
+ 4829 & 0.0833 & 0.0069 & 0 \\
+ \hline
+ 4830 & 0.0822 & 0.0067 & 0 \\
+ \hline
  4831 & 0.0796 & 0.0063 & 0 \\ 
  \hline
  4832 & 0.0830 & 0.0069 & 0 \\
  \hline
+ \rowcolor{red}
  4833 & 0.0759  & 0.0057 & 3.3 \\[1ex]
  \hline
 \end{tabular}
 \end{center}
-\caption{The data right before}
+\caption{The table shows the data when a positional fix is acquired.}
 \label{Table:wifioff}
 \end{table}
 
@@ -228,22 +249,7 @@ The time is estimated by counting the number of waveforms of 100 ms that is samp
 3.8 s + (20ms*42) = 5.04 s \approx  5 s
 \end{equation}
 
-The average current in deep sleep is measured to 3.2 mA. The average current during the initializing sequence is 101 ma. The generated excel document with data is shown in figure \ref{fig:deepsleep}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=16 cm]{Project_Report/Images/sleep.PNG}
-\caption{The data from the deepsleep measurements}
-\label{fig:deepsleep}
-\end{figure}
-
-
-
-
-
-
-
-
+The average current in deep sleep is measured to 3.2 mA. The average current during the initializing sequence is 101 ma. 
 
 
 
