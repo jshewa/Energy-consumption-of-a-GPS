@@ -1,13 +1,13 @@
 \chapter{Measuring platform}
 
-The method of shunt resistor was chosen to measure the energy consumption of the GPS system. The shunt resistor was chosen due to its low complexity and error rate compared to the Hall effect IC. The other software estimation techniques and cycle aware techniques wasn't chosen as they either tries to estimate the energy consumption with poor accuracy or they need non available RTL level information about the design. The shunt resistor threats the system that is getting measured as a black box, which enables the measuring platform to be used with any system. Two configurations of the measurement platform with a shunt resistor was developed.This section will explain functionality of each component of the measurement platfrom.
+The method of shunt resistor was chosen to measure the energy consumption of the GPS system. The shunt resistor was chosen due to its low complexity compared to the Hall effect IC.  The other software estimation techniques and cycle aware techniques was not chosen, as they either tries to estimate the energy consumption with poor accuracy or they need non available RTL information about the design. The shunt resistor threats the system that is getting measured as a black box, which enables the measuring platform to be used with any system. Two configurations of the measurement platform with a shunt resistor was developed. This section will explain the functionality of each component of the measurement platfrom.
 
 
 \section{PicoScope 640 AD}
 PicoScope 6000 from Picotecnology is a 4 channel digital oscilloscope with 5GS/s sampling and 2 GSample buffer memory \cite{Pico}. The oscilloscope is equipped with USB 3.0 and supplied with an SDK that enables the user to write their own software. The PicoScope has advanced trigger possibilities and a bandwidth of 500MHz along with a signal generator. The oscilloscope is used to measure the voltage drop across the shunt resistor.   
 
 \section{PC with python script}
-A Python API that uses the SDK from Picoscope is executed on the PC. The script is a modified version of the framework from Picoscope. The script is included in the appendix \ref{Appendix:EnergyMeasure.py}. The script measures the voltage drop over the shunt resistor by using the following parameters:
+A Python API that uses the SDK from Picoscope is executed on the PC. The script is a modified version of the framework by Amen Hussain \cite{Amen}. The script is included in the appendix \ref{Appendix:EnergyMeasure.py}. The script measures the voltage drop over the shunt resistor by using the following parameters:
 
 \begin{itemize}
     \item sampling- The sampling frequency 
@@ -20,12 +20,12 @@ The sequence diagram in figure \ref{fig:sequence} shows the interaction between 
 \begin{figure}[H]
 \centering
 \includegraphics[height=10.5cm]{Project_Report/Images/Sequence_diagram.PNG}
-\caption{The s}
+\caption{Sequence diagram for the measurement script}
 \label{fig:sequence}
 \end{figure}
  
 
- The script samples the data and stores it in a list, before it restarts the sampling for the next waveform. An overhead of storing data and initializing the oscilloscope before each sample introduces a limit for the processing speed of the measurements. The measured delay caused by the overhead in software is 30-50 milliseconds between each waveform. The delay is found by using timers in software during the execution of the python script. This means that some data is not captured during the overhead process and constrains the accuracy of the measurements.
+ The script samples the data and stores it in a list, before it restarts the sampling for the next waveform. An overhead of storing data and initializing the oscilloscope before each sample introduces a limit for the processing speed of the measurements. The measured delay caused by the overhead in software is 20-50 milliseconds between each waveform. The delay is found by using timers in software during the execution of the python script. This means that some data is not captured during the overhead process and constrains the accuracy of the measurements.
 The Python script generates a plot of each waveform after the data has been analyzed \ref{fig:pythonwaveform}
 
 \begin{figure}[H]
@@ -69,7 +69,7 @@ Figure \ref{fig:deploy_C027} shows the deployment diagram of the configuration w
 
 Two threads are run in "main.cpp" on the C027, the first thread receives the requested command from the PC and updates a shared variable between the two threads. The value of the shared variable corresponds to a predefined action. The second thread checks the value of the shared variable and executes the action by sending a certain sequence of bits over UART to the GPS. At the same time the action is executed, a GPIO pin is pulled high to signalize to the PC that a measurement should be done. The code that was written for C027 is included in the appendix \ref{Appendix:C027.Cpp}. 
 
-To measure the current consumption of the application board, we had to put the shunt resistor between the VCC and GND from the USB connection. The VCC for the USB connection could not be sinked from the USB port, as the value of the VCC would not be constant 5v and therefore introduce an error to the measurement. It was therefore decided to use a 12 V battery and the LM317 voltage regulator for producing the VCC for the application board. \ref{fig:Schematic_C027} shows the schematic of the C027 configuration with the LM317 voltage regulator. 
+To measure the current consumption of the application board, we had to put the shunt resistor between the VCC and GND from the USB connection. The VCC for the USB connection could not be sinked from the USB port, because the value of the VCC would not be constant 5v and therefore introduce an error to the measurement. We decided therefore to use a 12 V battery and the LM317 voltage regulator for producing the VCC for the application board. Figure \ref{fig:Schematic_C027} shows the schematic of the C027 configuration with the LM317 voltage regulator. 
 
 \begin{figure}[H]
 \centering
@@ -79,8 +79,8 @@ To measure the current consumption of the application board, we had to put the s
 \end{figure}
 
 The oscilloscope measures the voltage after shunt resistor. The voltage drop over the shunt resistor is estimated by first measuring the output of the voltage regulator, and then measuring the voltage after the shunt resistor and subtracting them in software. Measuring the voltage drop directly will change the common ground for the oscilloscope, C027 and the PC to the node after the shunt resistor. This is undesired, because it prevents the oscilloscope from measuring another signal which is not referenced to that GND. 
-\\*
-Difficult debugging, short circuiting of the PC and a too complex configuration encouraged another simpler measurement setup to be developed. 
+
+Difficult debugging, short circuiting of the PC and a too complex configuration encouraged us to develop another simpler measurement platform. 
 
 
 
@@ -117,7 +117,7 @@ The LoPy offers debugging possibilities over WiFI which enables a simple configu
 
 
 \subsubsection{Program code for acquiring a positional fix}
-Program code was written for the LoPy. The code was based on the framework published from PyCom. The code initializes the serial communication with the ARM microcontroller on the Quectel L76-l receiver. The next step is to parse the satellite data that is sent from the receiver to the LoPy. The data is sent according to the NMAE protocol. A part of the program code is shown in \ref{code:Parsing of gpsdata}. The code reads the data from serial and tries to find the GPGGA data. The GPGGA contains the fix status and other satellite data.If the GPGGA data is found, the fix status is read and set. The remaining code is included in the appendix \ref{Appendix:L76GNSS.py}
+Program code was written for the LoPy. The code was based on the framework published from PyCom. The code initializes the serial communication with the ARM microcontroller on the Quectel L76-l receiver. The next step is to parse the satellite data that is sent from the receiver to the LoPy. The data is sent according to the NMAE protocol. A part of the program code is shown in \ref{code:Parsing of gpsdata}. The code reads the data from serial and tries to find the GPGGA data. The GPGGA contains the fix status and other satellite data. If the GPGGA data is found, the fix status is read and set. The remaining code is included in the appendix \ref{Appendix:L76GNSS.py}
 
 \lstset{language=Python}          % Set your language (you can change the language for each code-block optionally)
 
@@ -151,9 +151,5 @@ Program code was written for the LoPy. The code was based on the framework publi
 
 
 
-
-
-
-
-The average current consumption is then calculated for each waveform by using Ohm's law.
+.
 \newpage

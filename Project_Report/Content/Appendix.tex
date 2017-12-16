@@ -398,11 +398,13 @@ def make_energy_model():
         for j in fix_period:
             if(j_iterator>columns-1):
                 j_iterator = 0   
-            if((j<5) or (j>i) ):
-                print(i_iterator,j_iterator)
-                Energy_consumption[i_iterator][j_iterator]= -1
-                j_iterator = j_iterator +1
-                continue
+                if((j<5) and (j<i)):
+                    Energy_consumption[i_iterator][j_iterator] = P_track*i
+                else:
+                    print(i_iterator,j_iterator)
+                    Energy_consumption[i_iterator][j_iterator]= -1
+                    j_iterator = j_iterator +1
+                    continue
             elif(j<14400):
                 T_acq   = 1
             elif (j>14399 and j<15552000):
