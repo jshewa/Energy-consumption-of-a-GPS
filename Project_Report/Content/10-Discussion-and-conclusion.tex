@@ -1,0 +1,48 @@
+\chapter{Discussion and Conclusion}
+Table \ref{Table:energy} from the previous chapter is plotted in figure \ref{fig:energyconsumption}. The plot shows the energy consumption for various update periods over a duration of 1 year.
+
+\begin{figure}[H]
+\centering
+\includegraphics[height=9.0cm]{Project_Report/Images/energyconsumption.PNG}
+\caption{The plot of the energy model from table \ref{Table:energy}}
+\label{fig:energyconsumption}
+\end{figure}
+
+The plot shows that the energy consumption increases when the update period is increased from 1 second to 7 seconds. This may not be intuitive as the increased update period will cause the system to spend a longer time in deepsleep. The increased energy consumption is caused by the overhead of waking up the system from deepsleep, initializing it and acquiring a fix in acquisition. From figure \ref{fig:firstcase}, we know that the initializing state is a major contributor to energy consumption. An update period that is bigger than  1 second forces the system to repeat this cycle multiple times instead of staying in the tracking state. An update period between (1,7) which uses deepsleep, is not possible because the overhead uses 6 seconds.
+
+The energy consumption decreases when the update period is increased from 7 \,s. At an update period of 9 \,s, the energy consumption is still higher then an update period of 1 \,s. But the by 10 \,s , the energy consumption is less then at 1 \,s. This means that because of the added overhead, it is always more beneficial to use an update period of 1 \,s which continuously stays in tracking state instead of using an update period in the range [7,9] \,s. The initial assumption that deepsleep is always a preferred method is therefore inaccurate. 
+
+The energy consumption continues to decrease until the update period is 14399 \,s. After the update period is increased from 14399 \,s, the energy consumption starts to increase. This is shown in table \ref{Table:data for the energy model}. We know from the previous chapter, that an update period that is longer than 14399 \,s will make the Ephemeris invalid. The pie diagram in figure \ref{fig:secondcase} shows how the acquisition state will be the major energy consumer. The addition of the time penalty in acquisition will cause an increase in energy consumption. By using algorithm in \ref{code:limit}, we find the range of update periods where it's optimal to use an update period of 14399 \,s instead. Algorithm \ref{code:limit} returns 14401 \,s as the limit. This means that because of the validity of the Ephemeris, it's better to use an update period of 14399 instead of 14400 \,s or 14401 \,s. From table \ref{Table:energy} we see that the difference in energy consumption over a year from an update period of 14399 \,s to 14400 \,s is:
+\begin{equation}
+352836.7334 J - 337146.8816 J = 15689.9174 J
+\end{equation}
+
+This shows that according to the model, it's optimal to use an update period that preserves the validity of the Ephemeris and Almanac by having an update period that is slightly less than 14400 \,s, instead of having an update period of 14400 \,s or slightly more.  
+
+
+\lstset{language=Python}          % Set your language (you can change the language for each code-block optionally)
+\begin{lstlisting}[frame=single, caption= Code used for finding the beneficial limit]  % Start your code-block
+
+    optimal   =   Energy_consumption[4][5]
+    temp     =   Energy_consumption[4][6]
+    fix_o = 14400
+
+    while(optimal<temp):  
+        T_sleep = fix_o - T_wake - 30 - T_track
+        optimal = (P_sleep*T_sleep + P_wake*T_wake + P_acq*30 + P_track*T_track)*t[4]/fix_o
+        fix_o = fix_o + 1
+    print("fix_o",fix_o)
+
+\end{lstlisting}
+\label{code:limit}
+
+
+The plot from \ref{fig:energyconsumption} continues to decrease until the updated period is increased to 15551700 \,s. The energy consumption increases after this point. An update period over 15551700 \,s causes the Almanac to be invalid. This means that the system will spend 35 \,s instead of 30 \,s in acquisition state to download the satellite data. The plot in \ref{fig:energyconsumption} shows that the increased energy consumption is insignificant. This is highlighted by table \ref{Table:data for the energy model}, which shows a difference of less than 1 J between an update period of 15551700 \,s and 15552000 \,s. The small difference in energy consumption is because of the small penalty of 5 \,s that is added to download a valid Almanac.  Most IoT applications need an update frequency that is higher than 180 days, which makes an update period in the range of [57080, 5551700 ] \,s impractical. 
+
+In the introduction chapter, we explained the necessity for an energy model for controlling a GPS optimally. This project has explained how the simple model in figure \ref{fig:energyconsumption} can be used by an application to determine the optimal energy strategy for requesting a positional fix. For instance, if an application wants a fix every 8 second, it can use the model to predict that it is better to have an update period of 1 second. Alternatively, the application can decide that the energy cost isn't worth the positional fix. 
+
+The time limit of the project compelled us to make a simple model. The consequence of the simple model is that the assumptions might be too oversimplified. The oversimplified model, gives an oversimplified prediction. The assumption that the receiver will use the specified time in acquisition is certainly not always the case. The time used in acquisition is dependent on signal strength, and not including the environment that the receiver operates in, is therefore a crucial oversimplification of the model. Further work should therefore include a probability of the predicted time in acquisition. 
+
+The state diagram from figure \ref{fig:GPS reciever} should also be extended with states that receiver transitions to if it doesn't acquire a fix within the timeout. A failure of acquiring a fix, might require a different strategy as it could inform the application that the receiver is in an environment where signal strength is low. For example a valley or under a tunnel. 
+
+Future work should also establish energy saving techniques that are specific for a certain state and update period. The comparison between the pie diagrams from the Energy modeling chapter, shows that there is different energy requirement for the states for different update periods. The initialize state is a major energy factor when satellite data is valid. Specific methods should therefore be used for decreasing the energy consumption when a low update period is used. Contrarily, when a greater update period is used, the acquisition is the main energy consumer. This project highlights that there are considerable benefits in using the simple energy model for an optimal energy strategy, despite the simplified model. 
